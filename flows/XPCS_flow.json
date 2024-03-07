@@ -1,0 +1,128 @@
+{
+  "Comment": "Flow with states: SourceTransfer, AcquireNodes, XpcsBoostCorr, MakeCorrPlots, GatherXpcsMetadata, PublishGatherMetadata, PublishTransfer, PublishIngest",
+  "StartAt": "SourceTransfer",
+  "States": {
+    "SourceTransfer": {
+      "Next": "AcquireNodes",
+      "Type": "Action",
+      "Comment": "Transfer from the source collection to the staging location",
+      "WaitTime": 1800,
+      "ActionUrl": "https://actions.automate.globus.org/transfer/transfer",
+      "Parameters": {
+        "transfer_items.$": "$.input.source_transfer.transfer_items",
+        "source_endpoint_id.$": "$.input.source_transfer.source_endpoint_id",
+        "destination_endpoint_id.$": "$.input.source_transfer.destination_endpoint_id"
+      },
+      "ResultPath": "$.SourceTransfer"
+    },
+    "AcquireNodes": {
+      "Next": "XpcsBoostCorr",
+      "Type": "Action",
+      "Comment": null,
+      "WaitTime": 86400,
+      "ActionUrl": "https://compute.actions.globus.org",
+      "Parameters": {
+        "tasks": [
+          {
+            "payload.$": "$.input",
+            "endpoint.$": "$.input.compute_endpoint",
+            "function.$": "$.input.acquire_nodes_function_id"
+          }
+        ]
+      },
+      "ResultPath": "$.AcquireNodes",
+      "ExceptionOnActionFailure": false
+    },
+    "XpcsBoostCorr": {
+      "Next": "MakeCorrPlots",
+      "Type": "Action",
+      "Comment": null,
+      "WaitTime": 7200,
+      "ActionUrl": "https://compute.actions.globus.org",
+      "Parameters": {
+        "tasks": [
+          {
+            "payload.$": "$.input",
+            "endpoint.$": "$.input.compute_endpoint",
+            "function.$": "$.input.xpcs_boost_corr_function_id"
+          }
+        ]
+      },
+      "ResultPath": "$.XpcsBoostCorr",
+      "ExceptionOnActionFailure": true
+    },
+    "MakeCorrPlots": {
+      "Next": "GatherXpcsMetadata",
+      "Type": "Action",
+      "Comment": null,
+      "WaitTime": 28800,
+      "ActionUrl": "https://compute.actions.globus.org",
+      "Parameters": {
+        "tasks": [
+          {
+            "payload.$": "$.input",
+            "endpoint.$": "$.input.compute_endpoint",
+            "function.$": "$.input.make_corr_plots_function_id"
+          }
+        ]
+      },
+      "ResultPath": "$.MakeCorrPlots",
+      "ExceptionOnActionFailure": false
+    },
+    "GatherXpcsMetadata": {
+      "Next": "PublishGatherMetadata",
+      "Type": "Action",
+      "Comment": null,
+      "WaitTime": 300,
+      "ActionUrl": "https://compute.actions.globus.org",
+      "Parameters": {
+        "tasks": [
+          {
+            "payload.$": "$.input",
+            "endpoint.$": "$.input.login_node_endpoint",
+            "function.$": "$.input.gather_xpcs_metadata_function_id"
+          }
+        ]
+      },
+      "ResultPath": "$.GatherXpcsMetadata",
+      "ExceptionOnActionFailure": true
+    },
+    "PublishGatherMetadata": {
+      "Next": "PublishTransfer",
+      "Type": "Action",
+      "Comment": "Say something to start the conversation",
+      "WaitTime": 600,
+      "ActionUrl": "https://compute.actions.globus.org",
+      "Parameters": {
+        "tasks": [
+          {
+            "payload.$": "$.GatherXpcsMetadata.details.result[0]",
+            "endpoint.$": "$.input.compute_endpoint",
+            "function.$": "$.input.publish_gather_metadata_function_id"
+          }
+        ]
+      },
+      "ResultPath": "$.PublishGatherMetadata",
+      "ExceptionOnActionFailure": false
+    },
+    "PublishTransfer": {
+      "Next": "PublishIngest",
+      "Type": "Action",
+      "Comment": "Transfer files for publication",
+      "WaitTime": 600,
+      "ActionUrl": "https://actions.automate.globus.org/transfer/transfer",
+      "InputPath": "$.PublishGatherMetadata.details.results[0].output.transfer",
+      "ResultPath": "$.PublishTransfer"
+    },
+    "PublishIngest": {
+      "End": true,
+      "Type": "Action",
+      "Comment": "Ingest the search document",
+      "WaitTime": 300,
+      "ActionUrl": "https://actions.globus.org/search/ingest",
+      "InputPath": "$.PublishGatherMetadata.details.results[0].output.search",
+      "ResultPath": "$.PublishIngest",
+      "ExceptionOnActionFailure": false
+    }
+  }
+}
