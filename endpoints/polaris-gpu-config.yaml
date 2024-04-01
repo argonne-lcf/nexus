@@ -7,6 +7,7 @@ engine:
   cpu_affinity: 'list:24-31,56-63:16-23,48-55:8-15,40-47:0-7,32-39'
   cpus_per_node: 64
   max_retries_on_system_failure: 2
+  max_workers: 4
   prefetch_capacity: 0
   provider:
     account: <YOUR_ALCF_PROJECT>

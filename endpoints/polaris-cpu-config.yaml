@@ -1,4 +1,3 @@
-description: "Polaris endpoint config that creates 32 workers per node and assigns 1 cpu core to each worker" 
 display_name: "polaris-cpu-endpoint"
 engine:
   address:
@@ -10,7 +9,7 @@ engine:
   max_retries_on_system_failure: 2
   prefetch_capacity: 0
   provider:
-    account: IRIBeta
+    account: <YOUR_ALCF_PROJECT>
     init_blocks: 0
     launcher:
       bind_cmd: --cpu-bind

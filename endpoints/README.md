@@ -1,4 +1,4 @@
-# nexus
+# Compute Endpoints
 Here we have sample configurations for Globus Compute endpoints for ALCF machines.
 
 Details on how to setup a Globus Compute endpoint can be found [here](https://funcx.readthedocs.io/en/latest/endpoints.html).
