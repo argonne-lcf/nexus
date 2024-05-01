@@ -1,0 +1,31 @@
+display_name: "polaris-gpu-endpoint"
+engine:
+  address:
+    ifname: bond0
+    type: address_by_interface
+  available_accelerators: 4
+  cpu_affinity: 'list:24-31,56-63:16-23,48-55:8-15,40-47:0-7,32-39'
+  cpus_per_node: 64
+  max_retries_on_system_failure: 2
+  max_workers: 4
+  prefetch_capacity: 0
+  provider:
+    account: <YOUR_ALCF_PROJECT>
+    init_blocks: 0
+    launcher:
+      bind_cmd: --cpu-bind
+      overrides: --ppn 1
+      type: MpiExecLauncher
+    max_blocks: 1
+    min_blocks: 0
+    nodes_per_block: 1
+    queue: debug
+    scheduler_options: '#PBS -l filesystems=home:eagle'
+    select_options: ngpus=4
+    type: PBSProProvider
+    walltime: 00:60:00
+    worker_init: 'module load conda; conda activate <YOUR_CONDA_ENV>; cd $HOME/.globus_compute/<YOUR_ENDPOINT_NAME>; <OTHER_STARTUP_COMMANDS>'
+  strategy:
+    max_idletime: 300
+    type: SimpleStrategy
+  type: GlobusComputeEngine

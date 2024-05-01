@@ -1,0 +1,29 @@
+display_name: "polaris-cpu-endpoint"
+engine:
+  address:
+    ifname: bond0
+    type: address_by_interface
+  max_workers: 32
+  cpu_affinity: 'alternating'
+  cpus_per_node: 64
+  max_retries_on_system_failure: 2
+  prefetch_capacity: 0
+  provider:
+    account: <YOUR_ALCF_PROJECT>
+    init_blocks: 0
+    launcher:
+      bind_cmd: --cpu-bind
+      overrides: --ppn 1
+      type: MpiExecLauncher
+    max_blocks: 1
+    min_blocks: 0
+    nodes_per_block: 1
+    queue: debug
+    scheduler_options: '#PBS -l filesystems=home:eagle'
+    type: PBSProProvider
+    walltime: 00:60:00
+    worker_init: 'module load conda; conda activate <YOUR_CONDA_ENV>; cd $HOME/.globus_compute/<YOUR_ENDPOINT_NAME>; <OTHER_STARTUP_COMMANDS>'
+  strategy:
+    max_idletime: 300
+    type: SimpleStrategy
+  type: GlobusComputeEngine

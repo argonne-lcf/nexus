@@ -1,6 +1,7 @@
-# nexus
-Scripts and tools for IRI applications at ALCF
+# Nexus at ALCF
 
-Add Nexus writeup & description
+Computational scientific research is evolving rapidly with faster data acquisition rates, larger datasets, and increasingly complex processing workflows. Automating these interconnected research processes is critical to fully utilize the power of supercomputing and leading-edge data storage and technologies to drive breakthrough science discoveries.
 
-Add troubleshooting?
+The Nexus effort at DOE’s Argonne National Laboratory enables large-scale science by integrating experimental and computational user facilities in a seamless research infrastructure. For over a decade Argonne researchers have been developing tools and methods to blend its world-class computing resources with data-intensive experiments.
+
+This repository contains examples and tools for Integrated Research Infrastructure (IRI) workflows deployed on ALCF machines. Many of the tools described here utilize [Globus Flows](https://docs.globus.org/api/flows/) and [Globus Data Transfers](https://www.globus.org/data-transfer). These tools have been successfully used to deploy workflows for experiments at the [Advanced Photon Light Source](https://github.com/globus-gladier/gladier-xpcs/tree/main) and [General Atomics’ DIII-D](https://github.com/cms21/fusion_compute). ALCF also supports other tools in the regime of remote workflows (e.g. [Balsam](https://balsam.readthedocs.io/en/latest/)). Any questions can be directed to the issues on this repository or support@alcf.anl.gov.
