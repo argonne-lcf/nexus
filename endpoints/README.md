@@ -6,6 +6,7 @@ Details on how to setup a Globus Compute endpoint can be found [here](https://fu
 Templates for ALCF machines:
 - [polaris-gpu-config.yaml](polaris-gpu-config.yaml): an endpoint config that will set up 4 workers per node and assign 1 gpu and 4 cpu hardware threads per worker.
 - [polaris-cpu-config.yaml](polaris-cpu-config.yaml): an endpoint config that will setup 32 workers per node and assign 1 cpu core per worker
+- [polaris-apptainer-config.yaml](polaris-apptainer-config.yaml): an endpoint config that will spin up an Apptainer container
 
 To use a template first edit it to include your project name, initialization commands, etc.  Then to configure the endpoint:
 
