@@ -1,0 +1,57 @@
+# This configuration file provides an example on how to run an Apptainer container
+# on a compute node on Polaris. When the node is acquired, the container will be 
+# started, and incoming Globus Compute tasks will be executed directly within the
+# running container.
+#
+# Note: The globus-compute-endpoint package must be baked into the container image
+#       in order for Globus Compute to communicate with the running container. Below
+#       is an example of how the installation was added to the LSST/DESC Dockerfile:
+#
+#       # Install Globus Compute endpoint system-wide (not inside lsst environment to avoid interfering with dependencies)
+#       # Only needed when Globus Compute directly executes functions within the container
+#       USER root
+#       RUN dnf install -y python3 python3-pip && \
+#           dnf clean all
+#       RUN pip3 install globus-compute-endpoint
+#       USER lsst
+
+amqp_port: 443
+display_name: PolarisApptainer
+engine:
+  max_workers_per_node: 1
+  container_type: apptainer
+  container_uri: <PLACEHOLDER --> /full/path/to/your/.sing-or-.sif-file>
+  container_cmd_options: --fakeroot
+  provider:
+    type: PBSProProvider
+    launcher:
+      type: SimpleLauncher
+    account: IRIBeta
+    cpus_per_node: 64
+    select_options: ngpus=0
+    scheduler_options: '#PBS -l filesystems=home:eagle'
+    queue: debug
+    init_blocks: 0
+    max_blocks: 1
+    min_blocks: 0
+    nodes_per_block: 1
+    walltime: 01:00:00
+    worker_init: |
+      ml use /soft/modulefiles
+      ml spack-pe-base/0.8.1
+      ml use /soft/spack/testing/0.8.1/modulefiles
+      ml apptainer/main
+      ml load e2fsprogs
+      export BASE_SCRATCH_DIR=/local/scratch/
+      export APPTAINER_TMPDIR=$BASE_SCRATCH_DIR/apptainer-tmpdir
+      mkdir -p $APPTAINER_TMPDIR
+      export APPTAINER_CACHEDIR=$BASE_SCRATCH_DIR/apptainer-cachedir
+      mkdir -p $APPTAINER_CACHEDIR
+      export HTTP_PROXY=http://proxy.alcf.anl.gov:3128
+      export HTTPS_PROXY=http://proxy.alcf.anl.gov:3128
+      export http_proxy=http://proxy.alcf.anl.gov:3128
+      export https_proxy=http://proxy.alcf.anl.gov:3128
+      module unload xalt
+  type: GlobusComputeEngine
+#allowed_functions:
+#   - <PLACEHOLDER --> your registered function UUID>
